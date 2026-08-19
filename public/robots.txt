@@ -1,0 +1,24 @@
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: *
+Allow: /
+
+# Build artefacts and framework internals — no crawl value.
+Disallow: /_build/
+Disallow: /_server/
+Disallow: /api/
+
+Sitemap: [INSERT_PRODUCTION_DOMAIN_HERE]/sitemap.xml
