@@ -14,6 +14,35 @@ export const SITE_URL = (
 /** Absolute URL helper — schema and og: tags must never emit relative paths. */
 export const abs = (p: string) => `${SITE_URL}${p.startsWith("/") ? p : `/${p}`}`;
 
+export type Weekday =
+  | "Monday"
+  | "Tuesday"
+  | "Wednesday"
+  | "Thursday"
+  | "Friday"
+  | "Saturday"
+  | "Sunday";
+
+/** A day's trading hours. No `opens`/`closes` means closed that day. */
+export type DayHours = {
+  day: Weekday;
+  /** 24h "HH:MM" — the format schema.org requires. */
+  opens?: string;
+  closes?: string;
+};
+
+/** "08:00" -> "8:00 AM". Display only; schema always uses the 24h source. */
+export const to12Hour = (t: string) => {
+  const [h = 0, m = 0] = t.split(":").map(Number);
+  const period = h >= 12 ? "PM" : "AM";
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return `${hour}:${String(m).padStart(2, "0")} ${period}`;
+};
+
+/** "8:00 AM – 4:30 PM", or "Closed". */
+export const formatDayHours = (d: DayHours) =>
+  d.opens && d.closes ? `${to12Hour(d.opens)} – ${to12Hour(d.closes)}` : "Closed";
+
 /**
  * Responsive image manifest.
  *
@@ -84,16 +113,24 @@ export const clinic = {
     "https://www.google.com/maps?q=2541%20Mickley%20Ave%2C%20Whitehall%20Township%2C%20PA%2018052&output=embed",
 
   /**
-   * Opening hours — MUST match the Google Business Profile exactly.
+   * Opening hours — single source of truth for the UI *and* the
+   * openingHoursSpecification schema. MUST match the Google Business Profile
+   * exactly, or the local pack will show conflicting hours.
    *
-   * `display` is what patients read. `spec` drives openingHoursSpecification and
-   * must use 24h "HH:MM". Delete any day the practice is closed.
+   * Times are 24h "HH:MM" (the format schema.org requires). A day with no
+   * `opens`/`closes` is closed; the UI renders "Closed" and the schema emits an
+   * explicit 00:00-00:00 entry for it.
    */
   hours: {
-    display: "[INSERT_HOURS_HERE]",
-    spec: [
-      { days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "[INSERT_HOURS_HERE]", closes: "[INSERT_HOURS_HERE]" },
-    ],
+    week: [
+      { day: "Monday", opens: "08:00", closes: "16:30" },
+      { day: "Tuesday", opens: "09:00", closes: "17:00" },
+      { day: "Wednesday", opens: "08:00", closes: "16:00" },
+      { day: "Thursday", opens: "09:00", closes: "17:00" },
+      { day: "Friday", opens: "08:00", closes: "15:00" },
+      { day: "Saturday" },
+      { day: "Sunday" },
+    ] as DayHours[],
   },
   note: "Visits are scheduled by appointment — a quick phone call is all it takes.",
   reviewsUrl: "https://www.google.com/search?q=Whitehall+Dental+Group+Whitehall+Township+PA+reviews",

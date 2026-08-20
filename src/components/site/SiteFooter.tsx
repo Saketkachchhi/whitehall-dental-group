@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Clock, Facebook, Instagram, MapPin, Phone } from "lucide-react";
 import { clinic, media, nav, serviceAreas } from "@/data/site";
 import { Picture } from "./Picture";
+import { OpeningHours } from "./OpeningHours";
 import { trackEvent } from "@/lib/analytics";
 
 export function SiteFooter() {
@@ -78,12 +79,10 @@ export function SiteFooter() {
             </li>
             <li className="flex gap-3">
               <Clock className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
-              <span>
-                <span className="block font-semibold text-foreground">
-                  {clinic.hours.display}
-                </span>
-                <span className="block">By appointment — please call ahead.</span>
-              </span>
+              <div className="min-w-0 flex-1">
+                <OpeningHours compact className="max-w-2xs" />
+                <p className="mt-3">By appointment — please call ahead.</p>
+              </div>
             </li>
           </ul>
           <a

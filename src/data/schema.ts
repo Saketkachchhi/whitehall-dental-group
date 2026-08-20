@@ -17,6 +17,7 @@ import {
   serviceAreas,
   services,
   testimonials,
+  type Weekday,
 } from "./site";
 
 /* ---------------- stable entity ids ---------------- */
@@ -38,6 +39,48 @@ const postalAddress = {
   addressRegion: clinic.addressParts.region,
   postalCode: clinic.addressParts.postalCode,
   addressCountry: clinic.addressParts.country,
+};
+
+/**
+ * Builds openingHoursSpecification from clinic.hours.week.
+ *
+ * Days sharing identical hours collapse into a single entry with a dayOfWeek
+ * array (Tuesday + Thursday here), which is what Google prefers. Closed days are
+ * emitted explicitly as 00:00-00:00 — Google's documented way to say "closed all
+ * day" — so the local pack doesn't fall back to guessing weekend availability.
+ */
+const buildOpeningHours = () => {
+  const byRange = new Map<string, Weekday[]>();
+  for (const d of clinic.hours.week) {
+    if (!d.opens || !d.closes) continue;
+    const key = `${d.opens}|${d.closes}`;
+    byRange.set(key, [...(byRange.get(key) ?? []), d.day]);
+  }
+
+  const specs = [...byRange.entries()].map(([key, days]) => {
+    const [opens, closes] = key.split("|");
+    return {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: days.map((d) => `https://schema.org/${d}`),
+      opens,
+      closes,
+    };
+  });
+
+  const closedDays = clinic.hours.week
+    .filter((d) => !d.opens || !d.closes)
+    .map((d) => `https://schema.org/${d.day}`);
+
+  if (closedDays.length) {
+    specs.push({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: closedDays,
+      opens: "00:00",
+      closes: "00:00",
+    });
+  }
+
+  return specs;
 };
 
 /** Drops keys whose value is an unfilled [INSERT_*] placeholder or empty. */
@@ -79,12 +122,7 @@ export const dentistSchema = {
     name,
     containedInPlace: { "@type": "State", name: "Pennsylvania" },
   })),
-  openingHoursSpecification: clinic.hours.spec.map((s) => ({
-    "@type": "OpeningHoursSpecification",
-    dayOfWeek: s.days.map((d) => `https://schema.org/${d}`),
-    opens: s.opens,
-    closes: s.closes,
-  })),
+  openingHoursSpecification: buildOpeningHours(),
   availableService: services.map((s) => ({
     "@type": "MedicalProcedure",
     name: s.title,

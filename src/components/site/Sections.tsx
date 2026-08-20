@@ -32,6 +32,7 @@ import {
 } from "./DentalIcons";
 import { BookCta, CallCta, DirectionsCta, GhostCta } from "./CtaButtons";
 import { Picture, fallbackSrc } from "./Picture";
+import { OpeningHours } from "./OpeningHours";
 import {
   clinic,
   doctors,
@@ -574,12 +575,12 @@ export function Contact() {
                 </li>
                 <li className="flex gap-4">
                   <Clock className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <p className="text-xs font-bold tracking-[0.18em] text-primary uppercase">
                       Opening Hours
                     </p>
-                    <p className="mt-1.5 text-base font-semibold">{clinic.hours.display}</p>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    <OpeningHours className="mt-3 max-w-xs" />
+                    <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                       {clinic.note}
                     </p>
                   </div>
