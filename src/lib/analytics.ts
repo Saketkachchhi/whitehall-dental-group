@@ -22,6 +22,27 @@ interface AnalyticsWindow extends Window {
   clarity?: (...args: unknown[]) => void;
 }
 
+/**
+ * Site event -> Meta standard event.
+ *
+ * Only Meta's predefined standard events are used, so the conversions are
+ * selectable as optimisation goals in Ads Manager (custom events are not, without
+ * extra setup).
+ *
+ * A note on what these actually mean, because it affects how you read the data:
+ * "Book Appointment" scrolls the visitor to the contact panel — it is intent, not
+ * a confirmed booking — so it reports as `Lead`, not `Schedule`. Tapping the
+ * phone number is the closest thing this site has to a real conversion, so it
+ * reports as `Contact`. Nothing here should be read as "an appointment happened".
+ */
+const META_STANDARD_EVENT: Partial<Record<SiteEvent, string>> = {
+  book_appointment: "Lead",
+  phone_click: "Contact",
+  email_click: "Contact",
+  get_directions: "FindLocation",
+  contact_form_submit: "Lead",
+};
+
 export function trackEvent(event: SiteEvent, payload: EventPayload = {}): void {
   if (typeof window === "undefined") return;
   const w = window as AnalyticsWindow;
@@ -30,6 +51,11 @@ export function trackEvent(event: SiteEvent, payload: EventPayload = {}): void {
   w.gtag?.("event", event, payload);
   w.clarity?.("event", event);
 
-  if (event === "book_appointment") w.fbq?.("track", "Schedule", payload);
-  if (event === "phone_click") w.fbq?.("track", "Contact", payload);
+  // Never put patient details in `payload` — it is transmitted to Meta verbatim.
+  const standard = META_STANDARD_EVENT[event];
+  if (standard) {
+    w.fbq?.("track", standard, { content_name: event, ...payload });
+  } else {
+    w.fbq?.("trackCustom", event, payload);
+  }
 }

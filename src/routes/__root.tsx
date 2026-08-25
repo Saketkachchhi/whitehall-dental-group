@@ -4,13 +4,20 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import {
+  metaPixelBaseCode,
+  metaPixelNoscriptSrc,
+  pixelEnabled,
+  trackPixelPageView,
+} from "../lib/meta-pixel";
 
 function NotFoundComponent() {
   return (
@@ -106,7 +113,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png", type: "image/png" },
+      /* Shave a round-trip off the pixel request. */
+      ...(pixelEnabled
+        ? [
+            { rel: "preconnect", href: "https://connect.facebook.net" },
+            { rel: "dns-prefetch", href: "https://www.facebook.com" },
+          ]
+        : []),
     ],
+    scripts: pixelEnabled ? [{ children: metaPixelBaseCode }] : [],
   }),
 
   shellComponent: RootShell,
@@ -119,9 +134,21 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        
         <HeadContent />
       </head>
       <body>
+        {pixelEnabled && (
+          <noscript>
+            <img
+              height="1"
+              width="1"
+              style={{ display: "none" }}
+              src={metaPixelNoscriptSrc}
+              alt=""
+            />
+          </noscript>
+        )}
         {children}
         <Scripts />
       </body>
@@ -129,11 +156,39 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Fires a Meta PageView on client-side route changes.
+ *
+ * The base snippet fires once on document load, so SPA navigations would
+ * otherwise never be recorded. Keyed on pathname only: hash changes (#services,
+ * #contact — which this site uses heavily) are the same page and must not count
+ * as page views. The first pathname is recorded without firing, because the base
+ * snippet has already reported it.
+ */
+function MetaPixelPageViews() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const lastPath = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (lastPath.current === null) {
+      lastPath.current = pathname;
+      return;
+    }
+    if (lastPath.current !== pathname) {
+      lastPath.current = pathname;
+      trackPixelPageView();
+    }
+  }, [pathname]);
+
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
+      {pixelEnabled && <MetaPixelPageViews />}
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>

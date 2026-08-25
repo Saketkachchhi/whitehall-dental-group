@@ -62,6 +62,22 @@ function Privacy() {
             </p>
           </div>
           <div>
+            <h2 className="text-2xl text-foreground">Advertising and website analytics</h2>
+            <p className="mt-3">
+              This website uses the Meta (Facebook) Pixel, a third-party tool that helps us
+              understand how visitors find and use the site and measure the performance of our
+              advertising. It records page views and general actions such as tapping our phone
+              number or requesting directions, along with technical details like your IP address,
+              browser, and device. This information is shared with Meta and may be used to show
+              you our adverts on Facebook and Instagram.
+            </p>
+            <p className="mt-3">
+              We do not send Meta your name, contact details, appointment information, or anything
+              about your dental care. You can limit this tracking through your browser settings,
+              your device's ad-tracking controls, or your Meta ad preferences.
+            </p>
+          </div>
+          <div>
             <h2 className="text-2xl text-foreground">Protected health information</h2>
             <p className="mt-3">
               Clinical records are maintained in accordance with HIPAA and applicable Pennsylvania
