@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Menu, X, Phone } from "lucide-react";
 import { clinic, media, nav } from "@/data/site";
 import { Picture } from "./Picture";
-import { trackEvent } from "@/lib/analytics";
+import { phoneLinkProps } from "@/lib/call-tracking";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -79,8 +79,7 @@ export function SiteHeader() {
         </nav>
 
         <a
-          href={clinic.phoneHref}
-          onClick={() => trackEvent("phone_click", { location: "header" })}
+          {...phoneLinkProps("header")}
           className="hidden shrink-0 items-center gap-2 rounded-full border border-primary/25 px-5 py-2.5 text-sm font-bold tracking-tight text-primary transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent lg:inline-flex"
         >
           <Phone className="size-4" aria-hidden="true" />
@@ -123,11 +122,7 @@ export function SiteHeader() {
               ))}
             </ul>
             <a
-              href={clinic.phoneHref}
-              onClick={() => {
-                setOpen(false);
-                trackEvent("phone_click", { location: "mobile-nav" });
-              }}
+              {...phoneLinkProps("mobile-nav", () => setOpen(false))}
               className="mt-3 flex items-center justify-center gap-2 rounded-full border border-primary/30 px-5 py-3.5 text-base font-semibold text-primary"
             >
               <Phone className="size-4" aria-hidden="true" />

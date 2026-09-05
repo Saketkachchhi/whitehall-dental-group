@@ -4,6 +4,7 @@ import { clinic, media, nav, serviceAreas } from "@/data/site";
 import { Picture } from "./Picture";
 import { OpeningHours } from "./OpeningHours";
 import { trackEvent } from "@/lib/analytics";
+import { phoneLinkProps } from "@/lib/call-tracking";
 
 export function SiteFooter() {
   return (
@@ -66,8 +67,7 @@ export function SiteFooter() {
             <li className="flex gap-3">
               <Phone className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
               <a
-                href={clinic.phoneHref}
-                onClick={() => trackEvent("phone_click", { location: "footer" })}
+                {...phoneLinkProps("footer")}
                 className="font-semibold text-primary hover:underline"
               >
                 {clinic.phone}

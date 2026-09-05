@@ -8,6 +8,7 @@
 export type SiteEvent =
   | "book_appointment"
   | "phone_click"
+  | "call_started"
   | "email_click"
   | "get_directions"
   | "contact_form_submit"
@@ -27,17 +28,22 @@ interface AnalyticsWindow extends Window {
  *
  * Only Meta's predefined standard events are used, so the conversions are
  * selectable as optimisation goals in Ads Manager (custom events are not, without
- * extra setup).
+ * extra setup). Anything not mapped here still reaches Meta, via `trackCustom`.
  *
  * A note on what these actually mean, because it affects how you read the data:
  * "Book Appointment" scrolls the visitor to the contact panel — it is intent, not
- * a confirmed booking — so it reports as `Lead`, not `Schedule`. Tapping the
- * phone number is the closest thing this site has to a real conversion, so it
- * reports as `Contact`. Nothing here should be read as "an appointment happened".
+ * a confirmed booking — so it reports as `Lead`, not `Schedule`.
+ *
+ * `Contact` is deliberately reserved for `call_started` — a tap that actually
+ * opened the phone dialer. Plain `phone_click` counts every tap including
+ * desktop ones that place no call, so it stays a custom event; promoting it to
+ * `Contact` would inflate the conversion count with people who only looked at
+ * the number. See lib/call-tracking.ts. Nothing here should be read as "an
+ * appointment happened", and `call_started` does not mean the clinic answered.
  */
 const META_STANDARD_EVENT: Partial<Record<SiteEvent, string>> = {
   book_appointment: "Lead",
-  phone_click: "Contact",
+  call_started: "Contact",
   email_click: "Contact",
   get_directions: "FindLocation",
   contact_form_submit: "Lead",

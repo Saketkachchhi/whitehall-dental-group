@@ -68,8 +68,14 @@ function Privacy() {
               understand how visitors find and use the site and measure the performance of our
               advertising. It records page views and general actions such as tapping our phone
               number or requesting directions, along with technical details like your IP address,
-              browser, and device. This information is shared with Meta and may be used to show
-              you our adverts on Facebook and Instagram.
+              browser, and device. This information is shared with Meta and may be used to show you
+              our adverts on Facebook and Instagram.
+            </p>
+            <p className="mt-3">
+              When you tap our phone number, we also record whether your device opened its phone
+              app, so that we can tell genuine calls apart from accidental taps. We cannot see
+              whether the call connected, how long it lasted, or what was said, and the phone number
+              you call from is never shared with Meta.
             </p>
             <p className="mt-3">
               We do not send Meta your name, contact details, appointment information, or anything

@@ -46,7 +46,7 @@ import {
   whyUs,
 } from "@/data/site";
 
-import { trackEvent } from "@/lib/analytics";
+import { phoneLinkProps } from "@/lib/call-tracking";
 
 export function Hero() {
   return (
@@ -562,8 +562,7 @@ export function Contact() {
                 <li className="flex gap-4">
                   <Phone className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
                   <a
-                    href={clinic.phoneHref}
-                    onClick={() => trackEvent("phone_click", { location: "contact" })}
+                    {...phoneLinkProps("contact")}
                     className="text-lg font-bold text-primary hover:underline"
                   >
                     {clinic.phone}
@@ -633,8 +632,7 @@ export function FinalCta() {
               location="final-cta"
             />
             <a
-              href={clinic.phoneHref}
-              onClick={() => trackEvent("phone_click", { location: "final-cta" })}
+              {...phoneLinkProps("final-cta")}
               className="group inline-flex min-h-13 items-center justify-center gap-2 rounded-full border-2 border-primary-foreground/70 px-7 py-3.5 text-base font-bold text-primary-foreground transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-foreground/10"
             >
               <Phone

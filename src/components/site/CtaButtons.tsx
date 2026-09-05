@@ -1,6 +1,7 @@
 import { ArrowRight, CalendarCheck, MapPin, Phone } from "lucide-react";
 import { clinic } from "@/data/site";
 import { trackEvent, type SiteEvent } from "@/lib/analytics";
+import { phoneLinkProps } from "@/lib/call-tracking";
 import { cn } from "@/lib/utils";
 
 const base =
@@ -49,8 +50,7 @@ export function CallCta({
 }) {
   return (
     <a
-      href={clinic.phoneHref}
-      onClick={() => trackEvent("phone_click", { location })}
+      {...phoneLinkProps(location)}
       className={cn(
         base,
         variant === "solid"
