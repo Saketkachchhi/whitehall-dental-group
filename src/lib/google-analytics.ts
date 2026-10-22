@@ -69,14 +69,18 @@ interface GtagWindow extends Window {
  * Overwriting it with the previous in-site URL would turn ordinary navigation
  * into self-referral noise.
  *
- * CAVEAT, IF PAGE VIEWS EVER LOOK INFLATED
+ * REQUIRED GA4 SETTING, OR PAGE VIEWS DOUBLE-COUNT
  *
  * GA4 data streams enable "page changes based on browser history events" by
- * default, and it was seen emitting its own extra, delayed page_view for the
- * same navigation. If the Pages report ever shows roughly double the real
- * traffic for /privacy, turn that option off in the data stream's Enhanced
- * Measurement settings rather than deleting this call: this one carries the
- * correct title and ignores #anchor links, which the automatic one does not.
+ * default, which makes gtag.js emit its OWN page_view on every pushState — so
+ * each SPA navigation reports twice. Confirmed on the wire: one navigation
+ * produced two /g/collect page_view hits while `dataLayer` held only the single
+ * call from here, and the extra hit was tagged `ae=a` (automatic event).
+ *
+ * Turn that option off in the data stream's Enhanced Measurement settings
+ * rather than deleting this call: the automatic one cannot be fixed, because it
+ * reads the stale title and also fires on #anchor links, which this site uses
+ * for its entire primary navigation.
  */
 export function trackGaPageView(): void {
   if (typeof window === "undefined" || !gaEnabled) return;
