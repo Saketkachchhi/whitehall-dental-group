@@ -17,28 +17,28 @@ const SITE_URL = (
 ).replace(/\/+$/, "");
 
 /**
- * Meta Pixel: keep non-production deploys out of the live ad dataset.
+ * Analytics tags: keep non-production deploys out of the live datasets.
  *
- * Vercel builds a preview deployment for every branch and pull request. A pixel
+ * Vercel builds a preview deployment for every branch and pull request. A tag
  * firing there reports our own testing as real patient activity, which is worse
  * than having no data at all.
  *
  * This is decided here rather than in the Vercel dashboard on purpose. Setting
- * VITE_META_PIXEL_ID to an empty value there is not dependable — an empty value
- * can reach the build as undefined, which falls straight through the `??` in
- * lib/meta-pixel.ts to the hard-coded production ID, silently enabling the very
- * thing it was meant to switch off. Deriving it from Vercel's own VERCEL_ENV
- * cannot be forgotten when someone adds a branch, and fails safe.
+ * these to an empty value there is not dependable — an empty value can reach the
+ * build as undefined, which falls straight through the `??` in lib/meta-pixel.ts
+ * and lib/google-analytics.ts to the hard-coded production ID, silently enabling
+ * the very thing it was meant to switch off. Deriving it from Vercel's own
+ * VERCEL_ENV cannot be forgotten when someone adds a branch, and fails safe.
  *
- * An explicit VITE_META_PIXEL_ID still wins, so a preview can opt in to a test
- * pixel when someone is deliberately debugging the tracking.
+ * An explicit value still wins, so a preview can opt in to a test pixel or a
+ * test GA property when someone is deliberately debugging the tracking.
  */
-if (
-  process.env["VERCEL_ENV"] &&
-  process.env["VERCEL_ENV"] !== "production" &&
-  process.env["VITE_META_PIXEL_ID"] === undefined
-) {
-  process.env["VITE_META_PIXEL_ID"] = "";
+const PRODUCTION_ONLY_ENV_VARS = ["VITE_META_PIXEL_ID", "VITE_GA_MEASUREMENT_ID"];
+
+if (process.env["VERCEL_ENV"] && process.env["VERCEL_ENV"] !== "production") {
+  for (const name of PRODUCTION_ONLY_ENV_VARS) {
+    if (process.env[name] === undefined) process.env[name] = "";
+  }
 }
 
 export default defineConfig({

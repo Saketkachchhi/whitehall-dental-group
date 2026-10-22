@@ -1,9 +1,15 @@
 /**
  * Analytics integration points.
  *
- * No tracking IDs are hard-coded. When GA4, Meta Pixel, Clarity or GTM is added
- * later, these events flow through automatically via `dataLayer` / `gtag` /
- * `fbq` if those globals exist. Until then, the calls are no-ops.
+ * Every event is broadcast to whichever tags are present: `dataLayer` (GTM),
+ * `gtag` (GA4 — see lib/google-analytics.ts), `fbq` (Meta — see
+ * lib/meta-pixel.ts) and `clarity`. Each call is a no-op when its global is
+ * absent, so adding or removing a tag needs no change here.
+ *
+ * GA4 receives the `SiteEvent` names below verbatim, as custom events. Promote
+ * the ones that matter to key events in the GA4 UI — deliberately not renamed to
+ * Google's recommended names here, so one event name means the same thing in
+ * both GA4 and Meta reporting.
  */
 export type SiteEvent =
   | "book_appointment"

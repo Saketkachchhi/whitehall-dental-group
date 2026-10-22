@@ -64,23 +64,33 @@ function Privacy() {
           <div>
             <h2 className="text-2xl text-foreground">Advertising and website analytics</h2>
             <p className="mt-3">
-              This website uses the Meta (Facebook) Pixel, a third-party tool that helps us
-              understand how visitors find and use the site and measure the performance of our
-              advertising. It records page views and general actions such as tapping our phone
-              number or requesting directions, along with technical details like your IP address,
-              browser, and device. This information is shared with Meta and may be used to show you
-              our adverts on Facebook and Instagram.
+              This website uses two third-party measurement tools: Google Analytics and the Meta
+              (Facebook) Pixel. Both record the pages you view and general actions such as tapping
+              our phone number or requesting directions, along with technical details about your
+              browser and device.
+            </p>
+            <p className="mt-3">
+              Google Analytics tells us how visitors find and move through the site — which pages
+              are useful and where people have trouble. It records your approximate location, worked
+              out from your internet connection, but not your precise location. We read this
+              information in aggregate rather than to identify individual visitors.
+            </p>
+            <p className="mt-3">
+              The Meta Pixel measures the performance of our advertising. It also records technical
+              details like your IP address. This information is shared with Meta and may be used to
+              show you our adverts on Facebook and Instagram.
             </p>
             <p className="mt-3">
               When you tap our phone number, we also record whether your device opened its phone
               app, so that we can tell genuine calls apart from accidental taps. We cannot see
               whether the call connected, how long it lasted, or what was said, and the phone number
-              you call from is never shared with Meta.
+              you call from is never shared with Google or Meta.
             </p>
             <p className="mt-3">
-              We do not send Meta your name, contact details, appointment information, or anything
-              about your dental care. You can limit this tracking through your browser settings,
-              your device's ad-tracking controls, or your Meta ad preferences.
+              We do not send Google or Meta your name, contact details, appointment information, or
+              anything about your dental care. You can limit this tracking through your browser
+              settings, your device's ad-tracking controls, your Meta ad preferences, or Google's
+              Analytics opt-out browser add-on.
             </p>
           </div>
           <div>
