@@ -14,7 +14,7 @@
  * vite.config.ts, which blanks it on non-production deploys.
  */
 
-const DEFAULT_MEASUREMENT_ID = "G-DGQRN0MGZ3";
+const DEFAULT_MEASUREMENT_ID = "G-LJCHG9HE1W";
 
 export const GA_MEASUREMENT_ID =
   import.meta.env?.["VITE_GA_MEASUREMENT_ID"] ?? DEFAULT_MEASUREMENT_ID;
